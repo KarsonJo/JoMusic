@@ -1,0 +1,26 @@
+-- ROLLBACK TRANSACTION;
+-- BEGIN TRANSACTION;
+-- COMMIT TRANSACTION;
+
+CREATE TEMP TABLE DownloadIds(
+Id INTEGER PRIMARY KEY
+);
+
+SELECT last_insert_rowid();
+
+INSERT INTO DownloadIds
+VALUES (null);
+
+INSERT INTO SongFileMeta
+VALUES (1,'1','1','1','1');
+INSERT INTO NeteaseData
+VALUES (1,1306386504);
+
+SELECT * FROM SongFileMeta;
+SELECT * FROM DownloadIds;
+SELECT * FROM NeteaseData;
+
+DELETE FROM SongFileMeta;
+
+SELECT Id FROM DownloadIds
+EXCEPT SELECT NeteaseId FROM NeteaseData;

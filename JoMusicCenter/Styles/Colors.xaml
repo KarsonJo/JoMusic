@@ -1,0 +1,20 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="Pink"/>
+
+    <SolidColorBrush  x:Key="BorderBrush" Color="Moccasin"/>
+    <SolidColorBrush x:Key="NavFontBrush" Color="White"/>
+
+    <SolidColorBrush x:Key="ExplorerButtonStaticBrush" Color="Gray"/>
+    <SolidColorBrush x:Key="ExplorerButtonCheckedBrush" Color="Black"/>
+
+    <SolidColorBrush x:Key="SearchBoxStaticBrush" Color="DarkGray"/>
+    <SolidColorBrush x:Key="SearchBoxCheckedBrush" Color="DimGray"/>
+    <SolidColorBrush x:Key="SearchBoxActiveBrush" Color="Black"/>
+    
+    <SolidColorBrush x:Key="ButtonMouseOverBrush" Color="Black" Opacity="0.2"/>
+    <SolidColorBrush x:Key="DisabledFontBrush" Color="Gray"/>
+
+    <SolidColorBrush x:Key="IconActiveBrush" Color="Black"/>
+
+</ResourceDictionary>

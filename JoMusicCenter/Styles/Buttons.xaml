@@ -1,0 +1,342 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:customControls="clr-namespace:JoMusicCenter.CustomControls"
+                    xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+
+    <!--chrom button styles-->
+    <Style TargetType="Button" x:Key="WindowChromeButtonStyle">
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="44"/>
+        <Setter Property="VerticalAlignment" Value="Stretch"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsMouseCaptured" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="AliceBlue"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="DodgerBlue"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="Button" x:Key="WindowMaximizeButtonStyle" BasedOn="{StaticResource WindowChromeButtonStyle}">
+        <Setter Property="Content" Value="&#xE922;"/>
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="Maximized">
+                <Setter Property="Content" Value="&#xE923;"/>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Button" x:Key="WindowCloseButtonStyle" BasedOn="{StaticResource WindowChromeButtonStyle}">
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="IsMouseCaptured" Value="False"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="PaleVioletRed"/>
+            </MultiTrigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="Red"/>
+            </Trigger>
+        </Style.Triggers>
+
+    </Style>
+
+    <!--nav buttons-->
+    <Style TargetType="{x:Type customControls:NavigationMenuButton}">
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="GroupName" Value="NavButton"/>
+        <Setter Property="MinHeight" Value="25"/>
+        <Setter Property="MinWidth" Value="100"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type customControls:NavigationMenuButton}">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="47"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border 
+                            Name="bgBorder"
+                            Grid.ColumnSpan="4"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            Opacity="0.2"
+                            Visibility="Collapsed">
+                            <Rectangle Fill="{DynamicResource NavFontBrush}" Opacity="0.2"/>
+
+
+                        </Border>
+                        <Path
+                            Grid.Column="0"
+                            Data="{TemplateBinding Icon}"
+                            Stretch="Uniform"
+                            Fill="{DynamicResource NavFontBrush}"
+                            Height="15"
+                            Width="20"
+                            Effect="{DynamicResource DropShadowEffect}"/>
+
+                        <ContentPresenter
+                            Grid.Column="1"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            Effect="{DynamicResource DropShadowEffect}"/>
+
+                        <Button
+                            Name="PlayButton"
+                            Grid.Column="2"
+                            Style="{StaticResource MaterialDesignFlatDarkButton}"
+                            FontFamily="{StaticResource WinSymbols}"
+                            Content="&#xE768;"
+                            Command="{TemplateBinding PlayCommand}"
+                            CommandParameter="{Binding}"
+                            Foreground="{DynamicResource NavFontBrush}"
+                            Visibility="Collapsed"/>
+                        
+                        <Button
+                            Name="UnpinButton"
+                            Grid.Column="3"
+                            Style="{StaticResource MaterialDesignFlatDarkButton}"
+                            FontFamily="{StaticResource WinSymbols}"
+                            Content="&#xE77A;"
+                            Command="{TemplateBinding UnpinCommand}"
+                            CommandParameter="{Binding}"
+                            Foreground="{DynamicResource NavFontBrush}"
+                            Visibility="Collapsed"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bgBorder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="bgBorder" Property="Opacity" Value="0.5"/>
+                        </Trigger>
+
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="bgBorder" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="bgBorder" Property="Opacity" Value="0.5"/>
+                        </Trigger>
+
+                        <DataTrigger Binding="{Binding IsPlaylist}" Value="True">
+                            <Setter TargetName="PlayButton" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="UnpinButton" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--explorer header buttons-->
+    <Style x:Key="ExplorerHeaderRadioButtonStyle" TargetType="{x:Type RadioButton}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Padding" Value="20,0"/>
+        <Setter Property="Foreground" Value="{StaticResource ExplorerButtonStaticBrush}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="GroupName" Value="MenuHeader"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <Border 
+                        Background="{TemplateBinding Background}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        Padding="{TemplateBinding Padding}">
+                        <ContentPresenter/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource ExplorerButtonCheckedBrush}"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--transparent button-->
+    <Style x:Key="TransparentButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}">
+                        <TextBlock 
+                            Text="{TemplateBinding Content}"
+                            Foreground="{TemplateBinding Foreground}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="{TemplateBinding FontSize}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsEnabled" Value="True"/>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsMouseCaptured" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" Value="{StaticResource ButtonMouseOverBrush}"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource DisabledFontBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--button with icon-->
+    <Style x:Key="ButtonWithIconStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource TransparentButtonStyle}">
+        <Setter Property="FontFamily" Value="{DynamicResource WinSymbols}"/>
+    </Style>
+
+    <!--explore sub menu toggle-->
+    <Style x:Key="ToggleButtonWithIconStyle" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Border Background="{TemplateBinding Background}">
+                        <TextBlock 
+                            Text="{TemplateBinding Content}"
+                            Foreground="{TemplateBinding Foreground}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontWeight="UltraBold"
+                            FontSize="{TemplateBinding FontSize}"/>
+                        <!--<Path
+                            Name="Path"
+                            Data="{TemplateBinding  Content}"
+                            Fill="{TemplateBinding Background}"
+                            Height="{TemplateBinding FontSize}"
+                            Stretch="Uniform"/>-->
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ExpandCollapseToggleButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource ToggleButtonWithIconStyle}">
+        <Setter Property="Content" Value="&#xE011;"/>
+        <Setter Property="FontFamily" Value="{DynamicResource WinSymbols}"/>
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Content" Value="&#xE010;"/>
+            </Trigger>
+        </Style.Triggers>
+
+
+    </Style>
+
+    <!--submenu icon button-->
+    <Style x:Key="SubMenuIconStyle" TargetType="{x:Type customControls:SubMenuIconButton}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Foreground" Value="{StaticResource IconActiveBrush}"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="MinWidth" Value="80"/>
+        <Setter Property="IconSize" Value="32"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type customControls:SubMenuIconButton}">
+                    <Border 
+                        Background="{TemplateBinding Background}"
+                        Padding="{TemplateBinding Padding}">
+                        <Grid>
+                            <Border 
+                                x:Name="bgBorder"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                Opacity="0.1"
+                                Visibility="Collapsed">
+                                <Rectangle Fill="{StaticResource NavFontBrush}" Opacity="0.1"/>
+                            </Border>
+                            <StackPanel
+                                Orientation="Vertical"
+                                Margin="5">
+
+                                <TextBlock 
+                                    Name="IconBlock"
+                                    Text="{TemplateBinding IconFont}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    FontFamily="{DynamicResource WinSymbols}"
+                                    FontWeight="Light"
+                                    FontSize="{TemplateBinding IconSize}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+
+                                <TextBlock
+                                    Name="TextBlock"
+                                    Margin="0,5,0,0"
+                                    FontWeight="SemiBold"
+                                    Text="{TemplateBinding Content}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="TextBlock" Property="Text" Value="">
+                            <Setter TargetName="TextBlock" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseCaptured" Value="True">
+                            <Setter TargetName="bgBorder" Property="Visibility" Value="Visible"/>
+                            <Setter TargetName="bgBorder" Property="Opacity" Value="1"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="IconBlock" Property="FontWeight" Value="Bold"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--player button-->
+    <!--https://stackoverflow.com/questions/64141018/c-sharp-wpf-material-design-materialdesignflatbutton-hint-highlight-color-->
+    <Style x:Key="MusicPlayerButtonStyle" 
+            BasedOn="{StaticResource MaterialDesignFlatDarkButton}"
+            TargetType="{x:Type ButtonBase}">
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="wpf:RippleAssist.Feedback" Value="#202020" />
+        <!--<Setter Property="BorderBrush" Value="Gray"/>-->
+        <Style.Resources>
+            <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="White" />
+        </Style.Resources>
+    </Style>
+
+</ResourceDictionary>

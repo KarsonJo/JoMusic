@@ -1,0 +1,1032 @@
+﻿<Window x:Class="JoMusicCenter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JoMusicCenter"
+        xmlns:System="clr-namespace:System;assembly=System.Runtime" 
+        xmlns:customcontrols="clr-namespace:JoMusicCenter.CustomControls"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:viewmodels="clr-namespace:JoMusicCenter.ViewModels"
+        xmlns:library="clr-namespace:MusicLibrary.Models;assembly=MusicLibrary"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+         xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="782" Width="1235"
+        WindowStartupLocation="CenterScreen"
+        x:Name="MyMainWindow"
+        IsEnabled="{Binding WindowEnable, UpdateSourceTrigger=PropertyChanged}">
+    <Window.DataContext>
+        <viewmodels:MainWindowViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <System:Double x:Key="CaptionHeight">32</System:Double>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <!--drop shadow effect-->
+    </Window.Resources>
+
+    <Window.Style>
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="AllowsTransparency" Value="True"/>
+            <Setter Property="WindowStyle" Value="None"/>
+            <Setter Property="UseLayoutRounding" Value="True"/>
+            <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
+            <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
+            <Setter Property="BorderThickness" Value="3"/>
+            <Setter Property="Effect" Value="{StaticResource MaterialDesignShadowDepth2}"/>
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome 
+                        CaptionHeight="{StaticResource CaptionHeight}"
+                        CornerRadius="0"
+                        GlassFrameThickness="0"
+                        NonClientFrameEdges="None"
+                        ResizeBorderThickness="3"
+                        UseAeroCaptionButtons="False"/>
+                </Setter.Value>
+            </Setter>
+            <!--<Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <BlurEffect KernelType="Gaussian" Radius="5" RenderingBias="Quality"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>-->
+            <!--<Setter Property="Template" Value="{StaticResource roundbutton}"/>-->
+
+
+        </Style>
+    </Window.Style>
+    <Border x:Name="RootBorder" BorderBrush="DimGray" BorderThickness="0" Background="White">
+        <Border.Style>
+            <Style TargetType="{x:Type Border}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsEnabled, ElementName=MyMainWindow}" Value="False">
+                        <Setter Property="Effect">
+                            <Setter.Value>
+                                <BlurEffect KernelType="Gaussian" Radius="5" RenderingBias="Quality"/>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="120"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+
+
+            <!--upper bar-->
+            <Grid 
+                x:Name="TitleBarGrid" Grid.Row="0" Grid.Column="1" Height="{StaticResource CaptionHeight}">
+                <!--<TextBlock Name="CaptionTitle" HorizontalAlignment="Center" Margin="30,0" Text="{Binding Title}"
+                                               Foreground="Black" FontWeight="Bold"/>-->
+
+                <!--search box-->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <TextBox Margin="12,0" x:Name="SearchBox" Style="{StaticResource SearchBoxStyle}" FontWeight="Heavy"/>
+                </StackPanel>
+
+                <!--window button-->
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button x:Name="SettingsButton" Click="SettingsButton_Click" Style="{StaticResource WindowChromeButtonStyle}" FontFamily="{StaticResource WinSymbols}"  Content="&#xE713;" FontSize="14"/>
+                    <Button x:Name="MinimizeButton" Click="MinimizeButton_Click" Style="{StaticResource WindowChromeButtonStyle}" FontFamily="{StaticResource WinSymbols}"  Content="&#xE921;" FontSize="11"/>
+                    <Button x:Name="MaximizeButton" Click="MaximizeButton_Click" Style="{StaticResource WindowMaximizeButtonStyle}" FontFamily="{StaticResource WinSymbols}" FontSize="11"/>
+                    <Button x:Name="CloseButton" Click="CloseButton_Click" Style="{StaticResource WindowCloseButtonStyle}" FontFamily="{StaticResource WinSymbols}" Content="&#xE8BB;" FontSize="11"/>
+                </StackPanel>
+            </Grid>
+
+            <!--left background-->
+            <Grid
+                Grid.Column="0"
+                Grid.RowSpan="3">
+                <Grid.Background>
+                    <ImageBrush x:Name="leftBackgroundImage" ImageSource="Images/krystal.jpg" Stretch="UniformToFill" AlignmentX="Center"/>
+                </Grid.Background>
+                <Border>
+                    <Border.Background>
+                        <SolidColorBrush
+                            Color="#ff343f3d"
+                            Opacity=".35"/>
+                    </Border.Background>
+                </Border>
+            </Grid>
+
+            <!--left main title-->
+            <TextBlock Name="CaptionTitle" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow" 
+                       Margin="30,0" Text="{Binding Title, Mode=OneTime}" FontSize="16" Foreground="White" FontWeight="Bold" Effect="{StaticResource MaterialDesignShadowDepth1}"/>
+
+            <!--upper left sidebar-->
+            <Grid 
+                Grid.Column="0"
+                Grid.RowSpan="2">
+
+
+                <!--menu-->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer
+                        Grid.Row="1"
+                        Margin=" 25, 0"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                    <Setter Property="Foreground" Value="{StaticResource NavFontBrush}"/>
+                                    <Setter Property="Effect" Value="{StaticResource DropShadowEffect}"/>
+                                </Style>
+
+                                <DataTemplate x:Key="NavFolderDataTemplate" DataType="{x:Type viewmodels:SidebarFolderViewModel}">
+                                    <customcontrols:NavigationMenuButton
+                                        Content="{Binding FolderName, UpdateSourceTrigger=PropertyChanged}"
+                                        Icon="{Binding Icon, UpdateSourceTrigger=PropertyChanged}"
+                                        Command="{Binding DataContext.OpenItemCommand, ElementName=MyMainWindow}"
+                                        UnpinCommand="{Binding UnpinCommand}"
+                                        PlayCommand="{Binding PlayCommand}"
+                                        CommandParameter="{Binding}"
+                                        Margin="0,5,0,0"/>
+                                </DataTemplate>
+                            </StackPanel.Resources>
+                            <TextBlock Text="音乐库"/>
+                            <ItemsControl
+                                ItemTemplate="{StaticResource NavFolderDataTemplate}"
+                                ItemsSource="{Binding SidebarLibraryFolders, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,17"/>
+                            <!--<customcontrols:NavigationMenuButton
+                                    Content="Root"
+                                    Icon="{StaticResource FileFolderIcon}"
+                                    Margin="0,5,0,0"/>
+                                <customcontrols:NavigationMenuButton
+                                    Content="Artists"
+                                    Icon="{StaticResource MusicFolderIcon}"
+                                    Margin="0,5,0,0"/>
+                                <customcontrols:NavigationMenuButton
+                                    Content="Albums"
+                                    Icon="{StaticResource MusicFolderIcon}"
+                                    Margin="0,5,0,0"/>
+                                <customcontrols:NavigationMenuButton
+                                    Content="Uncategorized"
+                                    Icon="{StaticResource MusicFolderIcon}"
+                                    Margin="0,5,0,0"/>
+                            </ItemsControl>-->
+                            <TextBlock Text="最喜欢"/>
+                            <ItemsControl 
+                                ItemTemplate="{StaticResource NavFolderDataTemplate}"
+                                ItemsSource="{Binding SidebarFavouriteFolders, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,17"/>
+                            <!--<customcontrols:NavigationMenuButton
+                                    Content="Playlist1"
+                                    Icon="{StaticResource PlaylistFolderIcon}"
+                                    Margin="0,5,0,0"/>
+                                <customcontrols:NavigationMenuButton
+                                    Content="
+                            2"
+                                    Icon="{StaticResource PlaylistFolderIcon}"
+                                    Margin="0,5,0,0"/>
+                                <customcontrols:NavigationMenuButton
+                                    Content="Playlist3"
+                                    Icon="{StaticResource PlaylistFolderIcon}"
+                                    Margin="0,5,0,0"/>
+                            </ItemsControl>-->
+                        </StackPanel>
+
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+
+            <!--lower left controller-->
+            <Grid
+                Grid.Row="2"
+                Grid.Column="0">
+                <!--Reserved for Music controller-->
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="10">
+                </StackPanel>
+                <Grid
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="40"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="SwitchToggleButton"
+                                  Grid.Column="0" Padding="0"
+                                  Command="{Binding SwitchPlayModeCommand}"
+                                  CommandParameter="{Binding ElementName=SwitchToggleButton}">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource MusicPlayerButtonStyle}" TargetType="{x:Type Button}">
+                                <Setter Property="Tag" Value="Repeat"/>
+                                <Style.Triggers>
+                                    <Trigger Property="Tag" Value="Repeat">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <materialDesign:PackIcon Kind="Repeat" Foreground="White" Width="30" Height="30" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger Property="Tag" Value="RepeatOff">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <materialDesign:PackIcon Kind="RepeatOff" Foreground="White" Width="30" Height="30" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger Property="Tag" Value="RepeatOnce">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <materialDesign:PackIcon Kind="RepeatOnce" Foreground="White" Width="30" Height="30" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Grid.Column="1" Style="{StaticResource MusicPlayerButtonStyle}" Padding="0"
+                            Command="{Binding PreviousSongCommand}">
+                        <materialDesign:PackIcon Kind="ChevronLeft" Foreground="White" Width="50" Height="50" />
+                    </Button>
+                    <ToggleButton Grid.Column="2"  Padding="0"
+                                  IsChecked="{Binding IsPlayingSong, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Command="{Binding PlayPauseCommand}"
+                                  CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}">
+                        <ToggleButton.Style>
+                            <Style BasedOn="{StaticResource MusicPlayerButtonStyle}" TargetType="{x:Type ToggleButton}">
+
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <materialDesign:PackIcon Kind="Pause" Foreground="White" Width="50" Height="50" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="False">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <materialDesign:PackIcon Kind="Play" Foreground="White" Width="50" Height="50" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+                    <Button Grid.Column="3" Style="{StaticResource MusicPlayerButtonStyle}" Padding="0"
+                            Command="{Binding NextSongCommand}">
+                        <materialDesign:PackIcon Kind="ChevronRight" Foreground="White" Width="50" Height="50" />
+                    </Button>
+                    <ToggleButton Grid.Column="4" Padding="0"
+                                  Command="{Binding ToggleShuffleCommand}"
+                                  CommandParameter="{Binding IsChecked, RelativeSource={RelativeSource Self}}">
+                        <ToggleButton.Style>
+                            <Style BasedOn="{StaticResource MusicPlayerButtonStyle}" TargetType="{x:Type ToggleButton}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <materialDesign:PackIcon Kind="ShuffleVariant" Foreground="White" Width="27" Height="27" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="False">
+                                        <Setter Property="Content">
+                                            <Setter.Value>
+                                                <materialDesign:PackIcon Kind="ShuffleDisabled" Foreground="White" Width="35" Height="35" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+
+                </Grid>
+            </Grid>
+
+            <!--main explorer-->
+            <Grid
+                Grid.Column="1"
+                Grid.Row="1"
+                Margin="10 0 10 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="38"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!--Menu-->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center">
+                        <RadioButton
+                            x:Name="OperationSubMenuButton"
+                            VerticalAlignment="Center"
+                            Content="常规"
+                            IsChecked="True"
+                            Style="{StaticResource ExplorerHeaderRadioButtonStyle}"/>
+                        <RadioButton
+                            x:Name="ResourceSubMenuButton"
+                            VerticalAlignment="Center"
+                            Content="获取"
+                            Style="{StaticResource ExplorerHeaderRadioButtonStyle}"/>
+                        <!--<RadioButton
+                            x:Name="ViewSubMenuButton"
+                            VerticalAlignment="Center"
+                            Content="视图"
+                            Style="{StaticResource ExplorerHeaderRadioButtonStyle}"/>-->
+
+                        <ToggleButton
+                            x:Name="ToggleExpandCollapseSubMenu"
+                            FontSize="16"
+                            IsChecked="True"
+                            Style="{StaticResource ExpandCollapseToggleButtonStyle}"/>
+
+                    </StackPanel>
+
+
+                </Grid>
+                <!--Sub Menu (File Opearation)-->
+                <Grid
+                    Grid.Row="1"
+                    HorizontalAlignment="Left">
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <ItemsControl
+                             x:Name="FileOperationsPanel"
+                             HorizontalAlignment="Left"
+                             Margin="10,0"
+                            Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=ToggleExpandCollapseSubMenu}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type viewmodels:SubmenuButtonViewModel}">
+                                    <customcontrols:SubMenuIconButton
+                                    IconFont="{Binding IconFont}"
+                                    Content="{Binding Name}"
+                                    Style="{StaticResource SubMenuIconStyle}"
+                                    CommandParameter="{Binding SelectedItems, ElementName=ListViewControl}"
+                                    Command="{Binding SubMenuCommand}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                            <ItemsControl.Style>
+                                <Style TargetType="ItemsControl">
+                                    <Setter Property="ItemsSource" Value="{Binding OperationTabSubMenu, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=ResourceSubMenuButton}" Value="True">
+                                            <Setter Property="ItemsSource" Value="{Binding ResourceTabSubMenu, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsChecked, ElementName=ViewSubMenuButton}" Value="True">
+                                            <Setter Property="ItemsSource" Value="{Binding ViewTabSubMenu, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.Style>
+                            <!--<customcontrols:SubMenuIconButton IconFont="&#xE734;" Content="Favourite" Style="{StaticResource SubMenuIconStyle}"/>
+                            <customcontrols:SubMenuIconButton IconFont="&#xE8C8;" Content="Copy" Style="{StaticResource SubMenuIconStyle}"/>
+                            <customcontrols:SubMenuIconButton IconFont="&#xE8C6;" Content="Cut" Style="{StaticResource SubMenuIconStyle}"/>
+                            <customcontrols:SubMenuIconButton IconFont="&#xE77F;" Content="Paste" Style="{StaticResource SubMenuIconStyle}"/>
+                            <customcontrols:SubMenuIconButton IconFont="&#xE74D;" Content="Delete" Style="{StaticResource SubMenuIconStyle}"/>
+                            <customcontrols:SubMenuIconButton IconFont="&#xE8AC;" Content="Rename" Style="{StaticResource SubMenuIconStyle}"/>
+                            <customcontrols:SubMenuIconButton IconFont="&#xE8F4;" Content="New Folder" Style="{StaticResource SubMenuIconStyle}"/>-->
+                        </ItemsControl>
+
+                    </StackPanel>
+
+                </Grid>
+
+                <!--Navigation and address bar-->
+                <Grid
+                    Grid.Row="2"
+                    Margin="3,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        FontSize="32"
+                        HorizontalContentAlignment="Center"
+                        Content="&#xE72B;"
+                        Command="{Binding GoToPreviousDirectoryCommand}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}"
+                                   BasedOn="{StaticResource ButtonWithIconStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CanGoBack, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button
+                        Grid.Column="1"
+                        FontSize="32"
+                        HorizontalContentAlignment="Center"
+                        Content="&#xE72A;"
+                        Command="{Binding GoToForwardDirectoryCommand}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}"
+                                   BasedOn="{StaticResource ButtonWithIconStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CanGoForward, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button
+                        Grid.Column="2"
+                        FontSize="32"
+                        HorizontalContentAlignment="Center"
+                        Content="&#xE74A;"
+                        Command="{Binding GoToParentDirectoryCommand}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}"
+                                   BasedOn="{StaticResource ButtonWithIconStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AtRootDirectory, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                        <Setter Property="IsEnabled" Value="False"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <!--reserved for breadcrumb nav bar-->
+                    <TextBox
+                        Margin="10,0,0,0"
+                        Grid.Column="3"
+                        Name="AddressBar"
+                        IsReadOnly="True"
+                        HorizontalAlignment="Stretch"
+                        Text="{Binding NavigationPath, Mode=OneWay}"
+                        Style="{StaticResource AddressBarTextBoxStyle }"/>
+
+                </Grid>
+
+                <!--file viewer-->
+                <ListView
+                    Grid.Row="3"
+                    x:Name="ListViewControl"
+                    Background="Transparent"
+                    Margin="0,0,0,5"
+                    BorderThickness="0"
+                    SelectionMode="Extended"
+                    ItemContainerStyle="{StaticResource TitleViewItemStyle}"
+                    ItemsSource="{Binding NavigatedFolderFiles, UpdateSourceTrigger=PropertyChanged}"
+                    Style="{StaticResource TitleViewStyle}">
+                    <!--<ListViewItem Content="Folder1" Tag="{StaticResource MusicFolderIcon}"/>
+                    <ListViewItem Content="Folder1" Tag="{StaticResource MusicFolderIcon}"/>
+                    <ListViewItem Content="Folder1" Tag="{StaticResource MusicFolderIcon}"/>
+                    <ListViewItem Content="Folder1" Tag="{StaticResource MusicFolderIcon}"/>-->
+                    <b:Interaction.Triggers>
+                        <b:EventTrigger EventName="MouseDoubleClick">
+                            <b:InvokeCommandAction 
+                                Command="{Binding OpenItemCommand}"
+                                CommandParameter="{Binding SelectedItem, ElementName=ListViewControl}"/>
+
+                        </b:EventTrigger>
+                        <b:EventTrigger EventName="GotFocus">
+                            <b:InvokeCommandAction 
+                                Command="{Binding ClosePlaylistCommand}"
+                                CommandParameter="{Binding SelectedItem, ElementName=ListViewControl}"/>
+
+                        </b:EventTrigger>
+                    </b:Interaction.Triggers>
+                </ListView>
+                <!--footer-->
+                <DockPanel
+                    Grid.Row="4"
+                    Height="25"
+                    LastChildFill="False">
+                    <DockPanel.Resources>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Foreground" Value="#202020"/>
+                        </Style>
+                    </DockPanel.Resources>
+                    <StackPanel 
+                        DockPanel.Dock="Left"
+                        Margin="12,0"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                        <TextBlock>
+                            <Run Text="{Binding Items.Count, ElementName=ListViewControl, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Run Text="个项目"/>
+                            <Run Text="|"/>
+                            <Run Text="{Binding SelectedItems.Count, ElementName=ListViewControl, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Run>
+                                <Run.Style>
+                                    <Style TargetType="{x:Type Run}">
+                                        <Setter Property="Text" Value="已选择"/>
+                                        <Style.Triggers>
+                                            <DataTrigger 
+                                                Binding="{Binding SelectedItems.Count, ElementName=ListViewControl, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Value="1">
+                                                <Setter Property="Text" Value="已选择"/>
+                                            </DataTrigger>
+                                              <DataTrigger 
+                                                Binding="{Binding SelectedItems.Count, ElementName=ListViewControl, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Value="0">
+                                                <Setter Property="Text" Value="已选择"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Run.Style>
+                            </Run>
+                        </TextBlock>
+                    </StackPanel>
+                    <!--<StackPanel
+                        DockPanel.Dock="Right"
+                        Margin="12,0"
+                        VerticalAlignment="Center">
+                        <TextBlock Text="100MB"/>
+                    </StackPanel>-->
+                </DockPanel>
+
+            </Grid>
+
+            <!--music info-->
+            <Grid
+                Grid.Row="2"
+                Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="20"/>
+                    <!--padding-->
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!--cover-->
+                <Image 
+                    Margin="5"
+                    Grid.RowSpan="2"
+                    Source="{Binding PlayingSongCover}" Stretch="Fill" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>
+
+
+                <StackPanel
+                    Orientation="Vertical">
+
+                </StackPanel>
+
+                <!--music name and artist-->
+                <StackPanel 
+                    Grid.Row="1"
+                    Grid.Column="2"
+                        DockPanel.Dock="Left"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                    <TextBlock FontSize="20">
+                            <Run Text="{Binding PlayingSong.SongName, Mode=OneWay, FallbackValue=SongName}"/>
+                            <Run Text=" - "/>
+                            <Run Text="{Binding PlayingSong.SongArtists, Mode=OneWay, FallbackValue=ArtistNames, Converter={StaticResource ListToStringConverter}}"/>
+                    </TextBlock>
+                </StackPanel>
+
+                <!--progress-->
+                <Slider
+                    Orientation="Horizontal"
+                    Minimum="0"
+                    Maximum="{Binding MediaLength, Mode=OneWay}"
+                    Value="{Binding MediaProgress, Mode=OneWay}"
+                    ValueChanged="Slider_ValueChanged"
+                    Thumb.DragStarted="Slider_DragStarted"
+                    Thumb.DragCompleted="Slider_DragCompleted"
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    VerticalAlignment="Center"/>
+
+                <!--playlist button-->
+                <ToggleButton x:Name="playlistButton" Grid.Column="4" Margin="20 0" Height="40" Width="40" Padding="0"
+                              Style="{StaticResource MaterialDesignFlatDarkButton}"
+                              IsChecked="{Binding PlaylistActive}">
+                    <materialDesign:PackIcon Kind="PlaylistMusic" Foreground="Black"  Width="auto" Height="auto" />
+                </ToggleButton>
+                <ToggleButton x:Name="volumeButton" Grid.Column="4" Grid.Row="1" Margin="20 0" Height="40" Width="40" Padding="0"
+                              IsChecked="{Binding IsMuted}"
+                              MouseEnter="PopupMouseOverControls_MouseEnter"
+                              MouseLeave="PopupMouseOverControls_MouseLeave">
+                    <ToggleButton.Style>
+                        <Style BasedOn="{StaticResource MaterialDesignFlatDarkButton}" TargetType="{x:Type ToggleButton}">
+                            <!--<Style.Resources>
+                                <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="Black" />
+                            </Style.Resources>-->
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <materialDesign:PackIcon Kind="VolumeHigh" Foreground="Black"  Width="auto" Height="auto" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <materialDesign:PackIcon Kind="VolumeOff" Foreground="Black"  Width="auto" Height="auto" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+                <Popup 
+                    x:Name="volumePopup"
+                    PlacementTarget = "{Binding ElementName = volumeButton}"
+                    AllowsTransparency = "True"
+                    PopupAnimation = "Fade"
+                    Placement="Right"
+                    VerticalOffset="-10"
+                    MouseEnter="PopupMouseOverControls_MouseEnter"
+                    MouseLeave="PopupMouseOverControls_MouseLeave">
+                    <Popup.Resources>
+                        <viewmodels:PopupIsOpenConverter x:Key="PopupIsOpenConverter"/>
+                    </Popup.Resources>
+                    <Grid
+                        Background="Transparent"
+                        Width="140"
+                        Height="60">
+                        <Rectangle Fill="White" Opacity=".9"/>
+                        <Slider
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Maximum="1"
+                            Margin="20 0"
+                            Value="{Binding Volume}"/>
+                    </Grid>
+
+                </Popup>
+            </Grid>
+
+            <!--playlist-->
+            <DockPanel
+                x:Name="playlistPanel"
+                Visibility="{Binding PlaylistActive, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Grid.Column="1"
+                Grid.Row="1"
+                LastChildFill="False">
+                <TabControl 
+                    Opacity="0.9"
+                    Margin="5"
+                    Width="500"
+                    DockPanel.Dock="Right">
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Margin="0" Text="播放列表" FontSize="18" Foreground="White"/>
+                        </TabItem.Header>
+                        <materialDesign:Card
+                         Background="{DynamicResource PrimaryHueLightBrush}"
+                        Opacity="0.9">
+                            <Grid>
+                                <Rectangle Fill="White" Opacity="0.9"/>
+                                <ListView 
+                                x:Name="PlaylistListView"
+                                ItemsSource="{Binding Playlist}"
+                                SelectionMode="Extended">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignNavigationPrimaryListBoxItem}">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="wpf:ListBoxItemAssist.CornerRadius" Value="0"/>
+                                            <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+                                            <Setter Property="Margin" Value="10,1,0,1"/>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.Resources>
+                                        <Style x:Key="PlayListTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+                                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                                            <Setter Property="Margin" Value="0"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="FontSize" Value="16"/>
+                                            <Setter Property="Effect" Value="{StaticResource MaterialDesignShadowDepth2}"/>
+                                        </Style>
+                                        <ContextMenu x:Key="PlayListMenu">
+                                            <MenuItem 
+                                                Header="移除"
+                                                Command="{Binding RemovePlaylistSongsCommand}"
+                                                CommandParameter="{Binding SelectedItems, Source={x:Reference PlaylistListView}}">
+                                                <MenuItem.Style>
+                                                    <Style TargetType="{x:Type MenuItem}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedItems.Count, Source={x:Reference PlaylistListView}}" Value="0">
+                                                                <Setter Property="IsEnabled" Value="False"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </MenuItem.Style>
+                                            </MenuItem>
+                                            <!--<MenuItem Header="Menu item 2" Visibility="Collapsed"/>
+                                            <Separator />
+                                            <MenuItem Header="Menu item 3" Visibility="Collapsed"/>-->
+                                        </ContextMenu>
+                                    </ListView.Resources>
+                                    
+                                    <ListView.Template>
+                                        <ControlTemplate>
+                                            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </ListView.Template>
+                                    
+                                    <ListBox.ContextMenu>
+                                        <StaticResource ResourceKey="PlayListMenu" />
+                                    </ListBox.ContextMenu>
+                                    
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type viewmodels:SongViewModel}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition/>
+                                                    <ColumnDefinition Width="30"/>
+                                                </Grid.ColumnDefinitions>
+                                                <!--<Grid.InputBindings>
+                                                <MouseBinding 
+                                                    MouseAction="{x:Static MouseAction.LeftClick}"
+                                                    Command="{Binding SwitchSongCommand}"
+                                                    CommandParameter="{Binding}" />
+                                            </Grid.InputBindings>-->
+                                                <TextBlock 
+                                                Grid.Column="0"
+                                                x:Name="PlaylistSong"
+                                                Width="200" 
+                                                Text="{Binding SongName, Mode=OneWay}" 
+                                                Style="{StaticResource PlayListTextStyle}"/>
+                                                <TextBlock 
+                                                Grid.Column="1"
+                                                x:Name="PlaylistArtist"
+                                                Text="{Binding SongArtists, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" 
+                                                Style="{StaticResource PlayListTextStyle}"/>
+                                                <Button
+                                                    Grid.Column="2"
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Padding="0"
+                                                    Height="Auto"
+                                                    Command="{Binding RemoveCommand}">
+                                                    <materialDesign:PackIcon Kind="Close" Width="30" Height="30" />
+                                                </Button>
+                                            </Grid>
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding Playing, Mode=OneWay}" Value="True">
+                                                    <Setter TargetName="PlaylistSong" Property="Foreground" Value="{DynamicResource SecondaryHueMidBrush}"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Playing, Mode=OneWay}" Value="True">
+                                                    <Setter TargetName="PlaylistArtist" Property="Foreground" Value="{DynamicResource SecondaryHueMidBrush}"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+
+                        </materialDesign:Card>
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Margin="0" Text="传输列表" FontSize="18" Foreground="White"/>
+                        </TabItem.Header>
+                        <materialDesign:Card
+                         Background="{DynamicResource PrimaryHueLightBrush}"
+                        Opacity="0.9">
+                            <Grid>
+                                <Rectangle Fill="White" Opacity="0.9"/>
+                                <ListView 
+                                ItemsSource="{Binding DownloadList}"
+                                SelectionMode="Extended">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignNavigationPrimaryListBoxItem}">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="wpf:ListBoxItemAssist.CornerRadius" Value="0"/>
+                                            <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+                                            <Setter Property="Margin"  Value="10,1,0,1"/>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+
+                                    <ListView.Template>
+                                        <ControlTemplate>
+                                            <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled">
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </ListView.Template>
+                                    <ListView.Resources>
+                                        <Style x:Key="PlayListTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+                                            <Setter Property="Margin" Value="5,0"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="FontSize" Value="16"/>
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListView.Resources>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type viewmodels:DownloadItemViewModel}">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="8*"/>
+                                                    <ColumnDefinition Width="2*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock
+                                                    Text="{Binding FileName, Mode=OneWay}"/>
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Right"
+                                                    Text="{Binding Size,Mode=OneWay}"/>
+
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Text="{Binding Notification, Mode=OneWay}"/>
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Right"
+                                                    Text="{Binding State,Mode=OneWay}"
+                                                    Foreground="{Binding StateBrush}"/>
+
+                                                <ProgressBar 
+                                                    Value="{Binding Progress,Mode=OneWay}"
+                                                    Grid.Row="2"
+                                                    Grid.ColumnSpan="2"
+                                                    Maximum="1"
+                                                    materialDesign:TransitionAssist.DisableTransitions="True"/>   
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+
+                        </materialDesign:Card>
+                    </TabItem>
+                </TabControl>
+
+                <!--<Grid
+                    Margin="5"
+                    Width="500"
+                    DockPanel.Dock="Right">
+
+
+                    <materialDesign:Card
+                         Background="MistyRose"
+                        Opacity="0.9">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="播放列表" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                       Margin="0 5" Style="{StaticResource MaterialDesignTextBlock}" FontSize="20" FontWeight="Bold"/>
+                            <Separator Grid.Row="1" Margin="2 3"/>
+                            <ListView 
+                                Grid.Row="2"
+                                ItemsSource="{Binding Playlist}"
+                                SelectionMode="Extended">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MaterialDesignNavigationPrimaryListBoxItem}">
+                                        <Setter Property="wpf:ListBoxItemAssist.CornerRadius" Value="0"/>
+                                        <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+                                        <Setter Property="Margin" Value="5,1"/>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                --><!--<b:Interaction.Triggers>
+                                    <b:EventTrigger EventName="LostFocus">
+                                        <b:InvokeCommandAction Command="{Binding PlaylistLostFocusCommand}" />
+                                    </b:EventTrigger>
+                                </b:Interaction.Triggers>--><!--
+                                <ListView.Template>
+                                    <ControlTemplate>
+                                        <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Visible">
+                                            <ItemsPresenter/>
+                                        </ScrollViewer>
+                                    </ControlTemplate>
+                                </ListView.Template>
+                                <ListView.Resources>
+                                    <Style x:Key="PlayListTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+                                        <Setter Property="Margin" Value="5,0"/>
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="FontSize" Value="16"/>
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect Color="Black" BlurRadius="2" ShadowDepth="1"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.Resources>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type viewmodels:SongViewModel}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
+                                            --><!--<Grid.InputBindings>
+                                                <MouseBinding 
+                                                    MouseAction="{x:Static MouseAction.LeftClick}"
+                                                    Command="{Binding SwitchSongCommand}"
+                                                    CommandParameter="{Binding}" />
+                                            </Grid.InputBindings>--><!--
+                                            <TextBlock 
+                                                Grid.Column="0"
+                                                x:Name="PlaylistSong"
+                                                Width="180" 
+                                                Text="{Binding SongName, Mode=OneWay}" 
+                                                Style="{StaticResource PlayListTextStyle}"/>
+                                            <TextBlock 
+                                                Grid.Column="1"
+                                                x:Name="PlaylistArtist"
+                                                Text="{Binding SongArtists, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" 
+                                                Style="{StaticResource PlayListTextStyle}"/>
+                                        </Grid>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Playing, Mode=OneWay}" Value="True">
+                                                <Setter TargetName="PlaylistSong" Property="Foreground" Value="DeepPink"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Playing, Mode=OneWay}" Value="True">
+                                                <Setter TargetName="PlaylistArtist" Property="Foreground" Value="DeepPink"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                                --><!--<ListBoxItem>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="WHAT DO YOU WANT FROM ME" Width="200" Margin="10 0"  FontSize="12">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect Color="Black" BlurRadius="4" ShadowDepth="1"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock Text="item2" Margin="10 0" Style="{StaticResource MaterialDesignTextBlock}"/>
+                                        </StackPanel>
+                                    </ListBoxItem>-->
+                                <!--<ListBoxItem>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="item1" Width="150" Style="{StaticResource MaterialDesignTextBlock}"/>
+                                            <TextBlock Text="item2" Style="{StaticResource MaterialDesignTextBlock}"/>
+                                        </StackPanel>
+                                    </ListBoxItem>--><!--
+                            </ListView>
+                        </Grid>
+
+                    </materialDesign:Card>
+                </Grid>-->
+            </DockPanel>
+
+        </Grid>
+    </Border>
+</Window>

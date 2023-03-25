@@ -1,0 +1,29 @@
+﻿<Application x:Class="JoMusicCenter.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:JoMusicCenter"
+             StartupUri="MainWindow.xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodels="clr-namespace:JoMusicCenter.ViewModels">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--Why my resources in merged dictionary fucked up?-->
+            <!--https://stackoverflow.com/questions/44469204/in-wpf-how-to-reference-a-staticresource-in-app-xaml-from-merged-dictionary-->
+           
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Orange" />
+                <ResourceDictionary>
+                    <viewmodels:ListToStringConverter x:Key="ListToStringConverter"/>
+                    <FontFamily x:Key="WinSymbols">pack://application:,,,/Fonts/#Segoe MDL2 Assets</FontFamily>
+                    <DropShadowEffect x:Key="DropShadowEffect" BlurRadius="4" ShadowDepth="0"/>
+                </ResourceDictionary>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <ResourceDictionary Source="Styles/Colors.xaml"/>
+                <ResourceDictionary Source="Styles/Buttons.xaml"/>
+                <ResourceDictionary Source="Styles/TextBoxes.xaml"/>
+                <ResourceDictionary Source="Styles/ListView.xaml"/>
+                <ResourceDictionary Source="Styles/Icons.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

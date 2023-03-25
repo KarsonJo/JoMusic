@@ -1,0 +1,94 @@
+--文件夹结点
+CREATE TABLE IF NOT EXISTS FolderNodes (
+Id INTEGER PRIMARY KEY,
+Dirname TEXT
+);
+
+--文件夹路径
+CREATE TABLE IF NOT EXISTS FolderPaths (
+Ancestor INTEGER NOT NULL,
+Descendant INTEGER NOT NULL,
+Length INTEGER NOT NULL DEFAULT 0,
+PRIMARY KEY (ancestor, descendant),
+FOREIGN KEY (Ancestor) REFERENCES FolderNodes(Id) ON DELETE CASCADE,
+FOREIGN KEY (Descendant) REFERENCES FolderNodes(Id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS 
+IX_FolderPaths_ADL
+ON
+FolderPaths(Ancestor, Descendant, Length);
+CREATE INDEX IF NOT EXISTS 
+IX_FolderPaths_DL
+ON
+FolderPaths(Descendant, Length);
+
+
+--歌曲文件链接
+CREATE TABLE IF NOT EXISTS SongFileMeta (
+Id INTEGER PRIMARY KEY,
+SongName TEXT NOT NULL,
+AlbumName TEXT,
+FileName TEXT,
+Md5 TEXT
+--INDEX IX_SongFileMeta_SongName NONCLUSTERED (SongName),
+--INDEX IX_SongFileMeta_AlbumName NONCLUSTERED (AlbumName),
+);
+CREATE INDEX IF NOT EXISTS 
+IX_SongFileMeta_SongName 
+ON
+SongFileMeta(SongName);
+CREATE INDEX IF NOT EXISTS 
+IX_SongFileMeta_AlbumName 
+ON
+SongFileMeta(AlbumName);
+
+
+--歌手
+CREATE TABLE IF NOT EXISTS SongArtists (
+SongId INTEGER NOT NULL,
+ArtistName TEXT NOT NULL,
+PRIMARY KEY (SongId, ArtistName),
+FOREIGN KEY (SongId) REFERENCES SongFileMeta(Id) ON DELETE CASCADE
+);
+
+--网易云ID（和歌曲一一对应，但这并不是歌曲本身的数据，因此抽出）
+CREATE TABLE IF NOT EXISTS NeteaseData (
+SongId INTEGER NOT NULL,
+NeteaseId INTEGER NOT NULL,
+PRIMARY KEY (SongId),
+--INDEX IX_NeteaseData_NeteaseId NONCLUSTERED (NeteaseId),
+FOREIGN KEY (SongId) REFERENCES SongFileMeta(Id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS 
+IX_NeteaseData_NeteaseId 
+ON
+NeteaseData(NeteaseId);
+
+--文件结点
+CREATE TABLE IF NOT EXISTS FileNodes (
+SongId INTEGER NOT NULL,
+FolderId INTEGER NOT NULL,
+PRIMARY KEY (SongId, FolderId),
+FOREIGN KEY (SongId) REFERENCES SongFileMeta(Id) ON DELETE CASCADE,
+FOREIGN KEY (FolderId) REFERENCES FolderNodes(Id) ON DELETE CASCADE
+);
+
+--新旧文件夹临时映射
+CREATE TABLE IF NOT EXISTS FolderIdMap (
+OldId INTEGER NOT NULL,
+NewId INTEGER NOT NULL,
+PRIMARY KEY (OldId, NewId),
+FOREIGN KEY (OldId) REFERENCES FolderNodes(Id),
+FOREIGN KEY (NewId) REFERENCES FolderNodes(Id)
+);
+
+--最喜欢列表
+-- CREATE TABLE IF NOT EXISTS PlayList(
+-- FolderId INTEGER PRIMARY KEY ON CONFLICT IGNORE,
+-- FOREIGN KEY (FolderId) REFERENCES FolderNodes(Id) ON DELETE CASCADE
+-- );
+CREATE TABLE IF NOT EXISTS PlayList(
+NavType TEXT,
+NavValue TEXT,
+PRIMARY KEY (NavType, NavValue) ON CONFLICT IGNORE
+);

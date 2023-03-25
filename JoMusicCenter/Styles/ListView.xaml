@@ -1,0 +1,204 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:customcontrols="clr-namespace:JoMusicCenter.CustomControls" xmlns:viewmodels="clr-namespace:JoMusicCenter.ViewModels" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" xmlns:jomusiccenter="clr-namespace:JoMusicCenter">
+    <BitmapImage x:Key="DefaultImage" UriSource="../Images/0.png" />
+    <Style x:Key="TitleViewItemStyle" TargetType="{x:Type ListViewItem}">
+        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Content" Value="{Binding Name}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <!--<Setter Property="Height" Value="80"/>-->
+        <Setter Property="ToolTip" Value="{Binding Tooltip}"/>
+        <Setter Property="Width" Value="80"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Border 
+                            Name="bgBorder"
+                            Grid.ColumnSpan="3"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            Opacity="0.2"
+                            Visibility="Collapsed">
+                            <Rectangle Fill="Black" Opacity="0.2"/>
+                        </Border>
+
+                        <Grid
+                            Margin="5"
+                            VerticalAlignment="Top">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <!--<Path
+                                x:Name="Path"
+                                Data="{TemplateBinding Tag}"
+                                Stretch="Uniform"
+                                Fill="{TemplateBinding Foreground}"
+                                HorizontalAlignment="Center"/>-->
+                            <!--<Image 
+                                x:Name="Thumbnail"
+                                VerticalAlignment="Stretch"
+                                Margin="5"
+                                Source="{Binding Cover1, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource DefaultImage}}"
+                                Stretch="Fill"
+                                Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"/>-->
+                            <Border
+                                Margin="3">
+                                <Image 
+                                x:Name="Thumbnail"
+                                VerticalAlignment="Stretch"
+                                Stretch="Fill"
+                                Height="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type Border}}}"/>
+                            </Border>
+                                <!--Source="{Binding Cover1, UpdateSourceTrigger=PropertyChanged, FallbackValue={StaticResource DefaultImage}}"-->
+                               
+                            <!--Source="../Images/0.png" Stretch="Fill" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"/>-->
+
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Grid.Row="1"
+                                Margin="0,6,0,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <ContentPresenter.Resources>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                        <Setter Property="TextAlignment" Value="Center"/>
+                                    </Style>
+                                </ContentPresenter.Resources>
+                            </ContentPresenter>
+
+                        </Grid>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="bgBorder" Property="Opacity" Value="0.5"/>
+                            <Setter TargetName="bgBorder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bgBorder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <DataTrigger Binding="{Binding Path=(customcontrols:MyScrollViewer.IsInViewport), RelativeSource={RelativeSource Self}}"
+                             Value="True">
+                            <Setter TargetName="Thumbnail" Property="Source" Value="{Binding Cover, Mode=OneTime, FallbackValue={StaticResource DefaultImage}}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleViewStyle" TargetType="{x:Type ListView}">
+        <Setter Property="ItemContainerStyle" Value="{StaticResource TitleViewItemStyle}"/>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <customcontrols:MyScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Visible" Style="{x:Null}">
+                        <WrapPanel IsItemsHost="True" />
+                    </customcontrols:MyScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="PlaylistViewItemStyle" TargetType="{x:Type ListViewItem}" BasedOn="{StaticResource MaterialDesignListBoxItem}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <ControlTemplate.Resources>
+                        <Style x:Key="PlayListTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource MaterialDesignBody1TextBlock}">
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect Color="DimGray" BlurRadius="2" ShadowDepth="1"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ControlTemplate.Resources>
+                    
+                        <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Border
+                        Name="bgBorder"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        Opacity="0.2"
+                        Visibility="Collapsed">
+                            <Rectangle Fill="Black" Opacity="0.2"/>
+                        </Border>
+                        <Button
+                            Width="Auto"
+                            Height="Auto"
+                            HorizontalContentAlignment="Left"
+                            Command="{Binding SwitchSongCommand}"
+                            CommandParameter="{Binding}" 
+                            Style="{StaticResource MaterialDesignFlatButton}">
+                                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <!--<Grid.InputBindings>
+                                        <MouseBinding 
+                                        MouseAction="{x:Static MouseAction.LeftClick}"
+                                        Command="{Binding SwitchSongCommand}"
+                                        CommandParameter="{Binding}"/>
+                                    </Grid.InputBindings>-->
+                                    <TextBlock 
+                                    Grid.Column="0"
+                                    x:Name="PlaylistSong"
+                                    Width="180" 
+                                    Text="{Binding SongName, Mode=OneWay}" 
+                                    Style="{StaticResource PlayListTextStyle}"/>
+                                    <TextBlock 
+                                    Grid.Column="1"
+                                    x:Name="PlaylistArtist"
+                                    Text="{Binding SongArtists, Mode=OneWay, Converter={StaticResource ListToStringConverter}}" 
+                                    Style="{StaticResource PlayListTextStyle}"/>
+                                </Grid>
+                            </Button>
+                        </Grid>
+                    <ControlTemplate.Triggers>
+                       
+
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="bgBorder" Property="Opacity" Value="0.5"/>
+                            <Setter TargetName="bgBorder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bgBorder" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+
+                        <DataTrigger Binding="{Binding Playing, Mode=OneWay}" Value="True">
+                            <Setter TargetName="PlaylistSong" Property="Foreground" Value="{DynamicResource PrimaryHueLightBrush}"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Playing, Mode=OneWay}" Value="True">
+                            <Setter TargetName="PlaylistArtist" Property="Foreground" Value="{DynamicResource PrimaryHueLightBrush}"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
